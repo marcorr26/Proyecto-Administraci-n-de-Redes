@@ -1,1 +1,60 @@
+---
+- name: Configurar Servidor e Instalar Squid en Docker
+  hosts: servidores_cloud
+  become: true
+  tasks:
+    - name: Actualizar repositorios
+      apt:
+        update_cache: yes
 
+    - name: Instalar dependencias de Docker
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Agregar llave GPG de Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Agregar repositorio de Docker
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Instalar Docker y Docker Compose
+      apt:
+        name:
+          - docker-ce
+          - docker-compose-plugin
+          - docker-compose
+        state: present
+
+    - name: Iniciar y habilitar el servicio de Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Crear directorio para el proyecto en el servidor
+      file:
+        path: /opt/squid_project
+        state: directory
+        mode: '0755'
+
+    - name: Copiar archivos de configuración al servidor
+      copy:
+        src: ../docker/{{ item }}
+        dest: /opt/squid_project/{{ item }}
+      loop:
+        - docker-compose.yml
+        - squid.conf
+
+    - name: Levantar contenedor de Squid con Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /opt/squid_project

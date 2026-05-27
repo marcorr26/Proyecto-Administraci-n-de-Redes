@@ -1,1 +1,44 @@
+---
+- name: Infraestructura
+  hosts: localhost
+  gather_facts: false
+  vars:
+    region: us-east-1
+    key_name: cache
+    instance_type: t3.micro 
+    ami_id: ami-0c7217cdde317cfec 
+    sg_name: squid_proxy_sg
 
+  tasks:
+    - name: Crear Security Group para SSH y Squid
+      amazon.aws.ec2_security_group:
+        name: "{{ sg_name }}"
+        description: SG para Proxy Squid
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            ports:
+              - 22
+            cidr_ip: 0.0.0.0/0 
+          - proto: tcp
+            ports:
+              - 3128
+            cidr_ip: 0.0.0.0/0 
+      register: sg_result
+
+    - name: Lanzar instancia EC2
+      amazon.aws.ec2_instance:
+        name: Servidor-Squid-Cloud
+        key_name: "{{ key_name }}"
+        region: "{{ region }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami_id }}"
+        security_group: "{{ sg_name }}"
+        network:
+          assign_public_ip: true
+        state: running
+      register: ec2_result
+
+    - name: Mostrar IP Pública de la instancia
+      debug:
+        msg: "La IP pública es: {{ ec2_result.instances[0].public_ip_address }}"

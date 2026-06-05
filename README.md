@@ -67,79 +67,78 @@ Antes de realizar cualquier ejecución, es obligatorio preparar el entorno de co
 
 ### [cite_start]🌐 Fase 1: Despliegue en Entorno Cloud (AWS) [cite: 49]
 
-[cite_start]El aprovisionamiento y despliegue en la nube se realiza de forma 100% automatizada, dividiéndose en dos etapas controladas por los playbooks dentro de la carpeta `ansible/`[cite: 24, 55, 56]:
+El aprovisionamiento y despliegue en la nube se realiza de forma 100% automatizada, dividiéndose en dos etapas controladas por los playbooks dentro de la carpeta `ansible/`:
 
 1. **Creación de la Infraestructura:**
-   [cite_start]Ejecuta el archivo encargado de interactuar con AWS para crear el grupo de seguridad e instanciar el servidor virtual EC2[cite: 53, 54, 192, 193]:
+   Ejecuta el archivo encargado de interactuar con AWS para crear el grupo de seguridad e instanciar el servidor virtual EC2:
    ```bash
    ansible-playbook ansible/infraestructura.yml
    ```
    *Toma nota de la dirección IP pública que se imprima en la terminal al finalizar la tarea.*
 
 2. **Configuración del Host e Inventario:**
-   [cite_start]Abre el archivo `ansible/inventario.ini` y define los parámetros del host dentro del grupo cloud[cite: 235, 236]:
+   Abre el archivo `ansible/inventario.ini` y define los parámetros del host dentro del grupo cloud:
    ```ini
    [servidores_cloud]
    <IP_PUBLICA_AWS> ansible_user=ubuntu ansible_ssh_private_key_file=/ruta/a/tu/llave.pem
    ```
 
 3. **Despliegue del Servicio:**
-   [cite_start]Ejecuta el playbook principal para instalar de forma automatizada Docker, transferir los archivos de configuración y levantar el servicio proxy mediante Docker Compose[cite: 194, 195, 196]:
+   Ejecuta el playbook principal para instalar de forma automatizada Docker, transferir los archivos de configuración y levantar el servicio proxy mediante Docker Compose:
    ```bash
    ansible-playbook -i ansible/inventario.ini ansible/despliegue.yml
    ```
 
-### [cite_start]🏠 Fase 2: Despliegue en Entorno Local (Red Comunitaria) [cite: 58]
+###  Fase 2: Despliegue en Entorno Local (Red Comunitaria) 
 
-[cite_start]Para dar cumplimiento a la replicación en infraestructuras autónomas y descentralizadas locales usando OpenWrt o Cisco[cite: 17, 43, 63, 64]:
+Para dar cumplimiento a la replicación en infraestructuras autónomas y descentralizadas locales usando OpenWrt o Cisco:
 
-1. [cite_start]Abre el archivo `ansible/inventario.ini`[cite: 236].
+1. Abre el archivo `ansible/inventario.ini`.
 2. Comenta el bloque de `[servidores_cloud]` usando el carácter `#`.
-3. [cite_start]Descomenta y edita la sección local con los datos de direccionamiento IP de tu servidor de laboratorio local[cite: 60, 206]:
+3. Descomenta y edita la sección local con los datos de direccionamiento IP de tu servidor de laboratorio local:
    ```ini
    [servidores_locales]
    192.168.1.100 ansible_user=tu_usuario_local ansible_ssh_pass=tu_contraseña
    ```
-4. Lanza de nuevo el despliegue automático enfocado en la red interna[cite: 61, 65]:
+4. Lanza de nuevo el despliegue automático enfocado en la red interna:
    ```bash
    ansible-playbook -i ansible/inventario.ini ansible/despliegue.yml
    ```
 
 ---
 
-## 🔍 Verificación del Funcionamiento y Auditoría de la Caché [cite: 30]
-
-Para comprobar el correcto flujo de conectividad, mapeo de puertos y validar las ventajas de la caché local en entornos comunitarios[cite: 144, 218, 219]:
+##  Verificación del Funcionamiento y Auditoría de la Caché 
+Para comprobar el correcto flujo de conectividad, mapeo de puertos y validar las ventajas de la caché local en entornos comunitarios:
 
 1. **Auditoría de Logs en Vivo:**
-   Conéctate al servidor (Cloud o Local) a través de SSH y visualiza los registros de peticiones de navegación de Squid en tiempo real[cite: 81, 256]:
+   Conéctate al servidor (Cloud o Local) a través de SSH y visualiza los registros de peticiones de navegación de Squid en tiempo real:
    ```bash
    sudo docker exec -it squid_proxy tail -f /var/log/squid/access.log
    ```
 
 2. **Prueba de Tráfico desde un Cliente:**
-   [cite_start]En una terminal independiente dentro de la red del cliente, fuerza peticiones HTTP a través del puerto del proxy (`3128`)[cite: 82, 217]:
+   En una terminal independiente dentro de la red del cliente, fuerza peticiones HTTP a través del puerto del proxy (`3128`):
    ```bash
    curl -x http://<IP_DE_TU_SERVIDOR>:3128 -I [http://example.com](http://example.com)
    ```
 
 3. **Interpretación de Códigos Técnicos:**
-   * [cite_start]`TCP_DENIED/403`: Petición bloqueada por reglas de seguridad perimetral configuradas[cite: 259, 275]. Asegúrate de añadir tu IP cliente dentro de las ACL autorizadas en `docker/squid.conf`.
-   * [cite_start]`TCP_MISS/200`: El recurso no estaba indexado en el almacenamiento del proxy local[cite: 140, 144]. Squid procesó la salida a la red WAN para obtenerlo por primera vez.
-   * [cite_start]`TCP_HIT/200`: **¡Caché operativa con éxito!** El recurso se sirvió de forma local e instantánea, reduciendo a cero el consumo de ancho de banda externo en esta consulta[cite: 144, 145].
+   * `TCP_DENIED/403`: Petición bloqueada por reglas de seguridad perimetral configuradas. Asegúrate de añadir tu IP cliente dentro de las ACL autorizadas en `docker/squid.conf`.
+   * `TCP_MISS/200`: El recurso no estaba indexado en el almacenamiento del proxy local. Squid procesó la salida a la red WAN para obtenerlo por primera vez.
+   * `TCP_HIT/200`: **¡Caché operativa con éxito!** El recurso se sirvió de forma local e instantánea, reduciendo a cero el consumo de ancho de banda externo en esta consulta.
 
 ---
 
-## [cite_start]🔒 Restricciones de Seguridad Críticas [cite: 259]
+##  Restricciones de Seguridad Críticas 
 
-[cite_start]En cumplimiento estricto con los criterios de evaluación y penalizaciones del proyecto final[cite: 277]:
-* [cite_start]**PROHIBIDO** subir al repositorio público archivos con extensiones de llave privada (`.pem`)[cite: 244, 278].
-* [cite_start]**PROHIBIDO** exponer de forma explícita credenciales fijas como *Access Keys*, *Secret Keys* o tokens temporales de AWS dentro de los playbooks[cite: 245, 246, 247, 277].
+En cumplimiento estricto con los criterios de evaluación y penalizaciones del proyecto final:
+* **PROHIBIDO** subir al repositorio público archivos con extensiones de llave privada (`.pem`).
+* **PROHIBIDO** exponer de forma explícita credenciales fijas como *Access Keys*, *Secret Keys* o tokens temporales de AWS dentro de los playbooks.
 
 ---
 
 ## 👥 Integrantes
 * Andrés Fernando Basto Bejarano
-* Miguel Jerónimo Sánchez Murcia
+* Melissa Marian Martinez Corredor
 
-[cite_start]*Administración de Redes — Universidad Católica de Colombia* [cite: 3, 20]
+*Administración de Redes — Universidad Católica de Colombia* 

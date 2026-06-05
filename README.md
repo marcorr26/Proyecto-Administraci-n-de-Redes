@@ -6,7 +6,7 @@ El servicio seleccionado corresponde a la **Categoría B (Servicios de Red): Pro
 
 ---
 
-## 🛠️ Tecnologías Obligatorias Utilizadas
+##  Tecnologías Obligatorias Utilizadas
 
 * **Automatización:** Ansible para la gestión de configuración y creación de infraestructura.
 * **Cloud Computing:** AWS EC2 (Capa Gratuita) para el entorno público.
@@ -17,7 +17,7 @@ El servicio seleccionado corresponde a la **Categoría B (Servicios de Red): Pro
 
 ---
 
-## 📂 Estructura del Repositorio
+##  Estructura del Repositorio
 
 La arquitectura de archivos del proyecto está organizada bajo la siguiente jerarquía estructural:
 
@@ -35,7 +35,7 @@ La arquitectura de archivos del proyecto está organizada bajo la siguiente jera
 
 ---
 
-## 📋 Requisitos Previos en la Máquina Local
+##  Requisitos Previos en la Máquina Local
 
 Antes de realizar cualquier ejecución, es obligatorio preparar el entorno de control local en tu máquina Linux Ubuntu con los siguientes comandos:
 
@@ -63,9 +63,9 @@ Antes de realizar cualquier ejecución, es obligatorio preparar el entorno de co
 
 ---
 
-## 🚀 Guía de Ejecución Paso a Paso
+## Guía de Ejecución Paso a Paso
 
-### [cite_start]🌐 Fase 1: Despliegue en Entorno Cloud (AWS) [cite: 49]
+### Fase 1: Despliegue en Entorno Cloud (AWS) 
 
 El aprovisionamiento y despliegue en la nube se realiza de forma 100% automatizada, dividiéndose en dos etapas controladas por los playbooks dentro de la carpeta `ansible/`:
 
@@ -137,8 +137,8 @@ En cumplimiento estricto con los criterios de evaluación y penalizaciones del p
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 * Andrés Fernando Basto Bejarano
-* Melissa Marian Martinez Corredor
+* Melissa Marian Martínez Corredor
 
 *Administración de Redes — Universidad Católica de Colombia* 

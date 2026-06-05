@@ -65,7 +65,23 @@ Antes de realizar cualquier ejecución, es obligatorio preparar el entorno de co
 
 ## Guía de Ejecución Paso a Paso
 
-### Fase 1: Despliegue en Entorno Cloud (AWS) 
+### Paso 0: Preparación del Entorno Local y Clonación
+
+Para comenzar a trabajar, primero debes crear un directorio organizado en tu máquina local y descargar los archivos del proyecto desde el repositorio de GitHub:
+
+```bash
+# 1. Crear un directorio dedicado al proyecto y acceder a él
+mkdir -p ~/trabajo
+cd ~/trabajo
+
+# 2. Clonar el repositorio oficial del proyecto
+git clone https://github.com/marcorr26/Proyecto-Administraci-n-de-Redes.git .
+
+# 3. Ingresar a la carpeta raíz del repositorio clonado
+cd Proyecto-Administraci-n-de-Redes
+```
+
+### Fase 1: Despliegue en Entorno Cloud (AWS)
 
 El aprovisionamiento y despliegue en la nube se realiza de forma 100% automatizada, dividiéndose en dos etapas controladas por los playbooks dentro de la carpeta `ansible/`:
 
@@ -88,7 +104,6 @@ El aprovisionamiento y despliegue en la nube se realiza de forma 100% automatiza
    ```bash
    ansible-playbook -i ansible/inventario.ini ansible/despliegue.yml
    ```
-
 ###  Fase 2: Despliegue en Entorno Local (Red Comunitaria) 
 
 Para dar cumplimiento a la replicación en infraestructuras autónomas y descentralizadas locales usando OpenWrt o Cisco:
